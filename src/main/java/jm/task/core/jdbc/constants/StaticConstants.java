@@ -1,27 +1,30 @@
 package jm.task.core.jdbc.constants;
 
-public class StaticConstants {
+public enum StaticConstants {
+    TABLE_COLUMN_ID("id"),
+    TABLE_COLUMN_NAME("name"),
+    TABLE_COLUMN_LASTNAME("last_name"),
+    TABLE_COLUMN_AGE("age"),
+    USER_ADDING_ERROR("не удалось добавить пользователя"),
+    GETTING_USERS_ERROR("не удалось создать список"),
+    URL_KEY("jdbc:mysql://localhost:3306/task_1_1_4"),
+    USERNAME_KEY("root"),
+    PASSWORD_KEY("root");
 
-    /**
-     * Константы для доступа к БД
-     */
-    public static final String URL_KEY = "jdbc:mysql://localhost:3306/task_1_1_4";
-     public static final String USERNAME_KEY = "root";
-     public static final String PASSWORD_KEY = "root";
+    private String title;
 
+    StaticConstants(String title) {
+        this.title = title;
+    }
 
-    /**
-     * Наименования столбцов в таблице
-     */
-    public static final String TABLE_COLUMN_ID = "id";
-    public static final String TABLE_COLUMN_NAME = "name";
-    public static final String TABLE_COLUMN_LASTNAME = "last_name";
-    public static final String TABLE_COLUMN_AGE = "age";
+    public String getTitle() {
+        return title;
+    }
 
-    /**
-     * Исключения
-     */
-    public static final String USER_ADDING_ERROR = "не удалось добавить пользователя";
-    public static final String GETTING_USERS_ERROR = "не удалось создать список";
-
+    @Override
+    public String toString() {
+        return "SConstants{" +
+               "title='" + title + '\'' +
+               '}';
+    }
 }

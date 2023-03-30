@@ -1,5 +1,6 @@
 package jm.task.core.jdbc.dao;
 
+import jm.task.core.jdbc.constants.StaticConstants;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
@@ -9,8 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import static jm.task.core.jdbc.constants.StaticConstants.*;
 
 public class UserDaoJDBCImpl implements UserDao {
 
@@ -59,12 +58,16 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException(USER_ADDING_ERROR);
-            } else {
+
+            int checkValue = preparedStatement.executeUpdate();
+            if (checkValue != 0) {
+                util.connectionCommit();
                 System.out.println("User с именем – " + name + " добавлен в базу данных");
+            } else {
+                util.connectionRollBack();
+                throw new RuntimeException(StaticConstants.USER_ADDING_ERROR.getTitle());
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -79,7 +82,14 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             PreparedStatement preparedStatement = util.getConnection().prepareStatement(queryRemove);
             preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
+
+            int checkValue = preparedStatement.executeUpdate();
+            if (checkValue != 0) {
+                util.connectionCommit();
+            } else {
+                util.connectionRollBack();
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -95,10 +105,10 @@ public class UserDaoJDBCImpl implements UserDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 User user = new User();
-                user.setId(resultSet.getLong(TABLE_COLUMN_ID));
-                user.setName(resultSet.getString(TABLE_COLUMN_NAME));
-                user.setLastName(resultSet.getString(TABLE_COLUMN_LASTNAME));
-                user.setAge(resultSet.getByte(TABLE_COLUMN_AGE));
+                user.setId(resultSet.getLong(StaticConstants.TABLE_COLUMN_ID.getTitle()));
+                user.setName(resultSet.getString(StaticConstants.TABLE_COLUMN_NAME.getTitle()));
+                user.setLastName(resultSet.getString(StaticConstants.TABLE_COLUMN_LASTNAME.getTitle()));
+                user.setAge(resultSet.getByte(StaticConstants.TABLE_COLUMN_AGE.getTitle()));
                 listFromTable.add(user);
             }
         } catch (SQLException e) {
@@ -115,7 +125,14 @@ public class UserDaoJDBCImpl implements UserDao {
                 """;
         try {
             PreparedStatement preparedStatement = util.getConnection().prepareStatement(queryClean);
-            preparedStatement.executeUpdate();
+
+            int checkValue = preparedStatement.executeUpdate();
+            if (checkValue != 0) {
+                util.connectionCommit();
+            } else {
+                util.connectionRollBack();
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
